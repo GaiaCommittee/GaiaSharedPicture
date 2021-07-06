@@ -86,47 +86,63 @@ namespace Gaia::SharedPicture
     /// Convert the pixel type in header into an OpenCV pixel type.
     int HeaderCoder::GetCVPixelType(const PictureHeader &header)
     {
+        int pixel_type = -1;
         switch (header.PixelBits)
         {
             case PictureHeader::PixelBitSizes::Bits8:
                 switch (header.PixelType)
                 {
                     case PictureHeader::PixelTypes::Unsigned:
-                        return CV_8UC(header.Channels);
+                        pixel_type = CV_8UC(header.Channels);
+                        break;
                     case PictureHeader::PixelTypes::Signed:
-                        return CV_8SC(header.Channels);
-                    default:
-                        return -1;
+                        pixel_type = CV_8SC(header.Channels);
+                        break;
+                    case PictureHeader::PixelTypes::Float:
+                        break;
                 }
+                break;
             case PictureHeader::PixelBitSizes::Bits16:
                 switch (header.PixelType)
                 {
                     case PictureHeader::PixelTypes::Unsigned:
-                        return CV_16UC(header.Channels);
+                        pixel_type = CV_16UC(header.Channels);
+                        break;
                     case PictureHeader::PixelTypes::Signed:
-                        return CV_16SC(header.Channels);
+                        pixel_type = CV_16SC(header.Channels);
+                        break;
                     case PictureHeader::PixelTypes::Float:
-                        return CV_16FC(header.Channels);
+                        pixel_type = CV_16FC(header.Channels);
+                        break;
                 }
+                break;
             case PictureHeader::PixelBitSizes::Bits32:
                 switch (header.PixelType)
                 {
                     case PictureHeader::PixelTypes::Signed:
-                        return CV_32SC(header.Channels);
+                        pixel_type = CV_32SC(header.Channels);
+                        break;
                     case PictureHeader::PixelTypes::Float:
-                        return CV_32FC(header.Channels);
-                    default:
-                        return -1;
+                        pixel_type = CV_32FC(header.Channels);
+                        break;
+                    case PictureHeader::PixelTypes::Unsigned:
+                        break;
                 }
+                break;
             case PictureHeader::PixelBitSizes::Bits64:
                 switch (header.PixelType)
                 {
                     case PictureHeader::PixelTypes::Float:
-                        return CV_64FC(header.Channels);
-                    default:
-                        return -1;
+                        pixel_type = CV_64FC(header.Channels);
+                        break;
+                    case PictureHeader::PixelTypes::Unsigned:
+                        [[fallthrough]];
+                    case PictureHeader::PixelTypes::Signed:
+                        break;
                 }
+                break;
         }
+        return pixel_type;
     }
 
     /// Get the header from a cv::Mat.
