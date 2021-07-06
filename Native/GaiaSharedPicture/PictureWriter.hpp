@@ -6,6 +6,8 @@
 #include <memory>
 #include <opencv2/opencv.hpp>
 
+#include "HeaderCoder.hpp"
+
 namespace Gaia::SharedPicture
 {
     /**
@@ -34,10 +36,10 @@ namespace Gaia::SharedPicture
         /**
          * @brief Create or open the shared memory block and construct a writer on it.
          * @param shared_block_name Name of the shared memory block.
-         * @param max_size Size of the memory block.
+         * @param max_picture_size Picture part size of the memory block, total size is max_size + 10.
          * @param create If false, then only try to open the existing memory block.
          */
-        PictureWriter(const std::string& shared_block_name, unsigned int max_size, bool create = true);
+        PictureWriter(const std::string& shared_block_name, unsigned int max_picture_size, bool create = true);
 
         /// Move constructor.
         PictureWriter(PictureWriter&& target) noexcept;
@@ -49,12 +51,20 @@ namespace Gaia::SharedPicture
         {
             return MaxSize;
         }
-        /// Get the address of the picture buffer memory, which header is not included.
+        /// Get the address of the picture buffer memory, after the header part.
         [[nodiscard]] inline unsigned char* GetPointer() const
         {
             if (RegionObject && RegionObject->get_address())
                 return static_cast<unsigned char*>(RegionObject->get_address()) + 10;
             return nullptr;
+        }
+
+        /// Manually set the header data of the memory block owned by this writer.
+        void SetHeader(const PictureHeader& header);
+        /// Manually set the header data of the memory block owned by this writer according to the given picture.
+        void SetHeader(const cv::Mat& picture)
+        {
+            SetHeader(HeaderCoder::GetHeader(picture));
         }
 
         /**
@@ -63,6 +73,7 @@ namespace Gaia::SharedPicture
          * @retval true Successfully written.
          * @retval false Failed to write.
          * @throws runtime_error If size of picture is bigger than max size.
+         * @detials This function will auto set the header data generated from
          */
         bool Write(const cv::Mat& picture);
 

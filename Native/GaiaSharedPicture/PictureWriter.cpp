@@ -76,4 +76,11 @@ namespace Gaia::SharedPicture
         }
         return false;
     }
+
+    /// Set header data of the memory owned by this writer.
+    void PictureWriter::SetHeader(const PictureHeader &header)
+    {
+        if (!RegionObject) throw std::runtime_error("Failed to set header: shared memory has not been opened.");
+        HeaderCoder::Encode(header, static_cast<unsigned char *>(RegionObject->get_address()));
+    }
 }
