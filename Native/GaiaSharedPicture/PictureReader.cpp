@@ -6,12 +6,19 @@ namespace Gaia::SharedPicture
     /// Open the shared memory block and construct a reader on it.
     PictureReader::PictureReader(const std::string &shared_block_name)
     {
-        MemoryObject = std::make_unique<boost::interprocess::shared_memory_object>(
-                boost::interprocess::open_only, shared_block_name.c_str(),
-                boost::interprocess::read_only);
-        RegionObject = std::make_unique<boost::interprocess::mapped_region>(
-                *MemoryObject,
-                boost::interprocess::read_only);
+        try
+        {
+            MemoryObject = std::make_unique<boost::interprocess::shared_memory_object>(
+                    boost::interprocess::open_only, shared_block_name.c_str(),
+                    boost::interprocess::read_only);
+            RegionObject = std::make_unique<boost::interprocess::mapped_region>(
+                    *MemoryObject,
+                    boost::interprocess::read_only);
+        }catch(std::exception& error)
+        {
+            throw std::runtime_error(std::string("Failed to open shared picture:") + error.what());
+        }
+
     }
 
     /// Copy constructor.
