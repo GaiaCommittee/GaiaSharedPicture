@@ -97,7 +97,7 @@ target_link_libraries(${TARGET_NAME} PUBLIC ${OpenCV_LIBRARIES})
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
     find_package(Threads)
     target_link_libraries(${TARGET_NAME} PUBLIC ${CMAKE_THREAD_LIBS_INIT})
-    target_link_libraries(${TARGET_NAME} PUBLIC dl)
+    target_link_libraries(${TARGET_NAME} PUBLIC dl rt)
 endif()
 
 #===============================
