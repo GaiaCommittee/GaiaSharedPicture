@@ -39,6 +39,14 @@ namespace Gaia::SharedPicture
             return nullptr;
         }
 
+        /// Get the address of the header.
+        [[nodiscard]] inline unsigned char* GetHeaderPointer()
+        {
+            if (RegionObject && RegionObject->get_address())
+                return static_cast<unsigned char*>(RegionObject->get_address());
+            return nullptr;
+        }
+
         /**
          * @brief Read a picture from the connected shared memory block.
          * @throws runtime_error If failed to decode header information or memory size is smaller than
