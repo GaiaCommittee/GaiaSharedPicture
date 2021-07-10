@@ -39,12 +39,19 @@ namespace Gaia::SharedPicture
             return nullptr;
         }
 
-        /// Get the address of the header.
-        [[nodiscard]] inline unsigned char* GetHeaderPointer()
+        /// Get the address of the shared memory.
+        [[nodiscard]] inline unsigned char* GetMemoryPointer()
         {
             if (RegionObject && RegionObject->get_address())
                 return static_cast<unsigned char*>(RegionObject->get_address());
             return nullptr;
+        }
+
+        /// Get the size of the shared memory.
+        [[nodiscard]] inline std::size_t GetMemorySize()
+        {
+            if (RegionObject) return RegionObject->get_size();
+            return 0;
         }
 
         /**
